@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IP Address Monitor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #22313f;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      position: relative; /* Container positioned relatively for absolute positioning */
+    }
+
+    h1 {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      position: relative;
+    }
+
+    tr:nth-child(even) {
+      background-color: #e4e4e4;
+    }
+
+    tr:hover {
+      background-color: #ffffcc; /* Light yellow */
+    }
+
+    .copy-icon i {
+      cursor: pointer;
+    }
+	
+    .search-box {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 10px;
+    }
+
+    .status-circle {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 5px;
+	  border: 1px solid #000; /* Add border property */
+    }
+
+    .status-circle.green {
+      background-color: limegreen;
+    }
+
+    .status-circle.yellow {
+      background-color: yellow;
+    }
+
+    .status-circle.orange {
+      background-color: orange;
+    }
+
+    .status-circle.red {
+      background-color: red;
+    }
+
+    .status-circle.black {
+      background-color: transparent;
+      border: 1px solid #000;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Clinical Client Services - Managed Servers</h1>
+    <div class="search-box">
+      <label for="appSearch">Search by Application:</label>
+      <input type="text" id="appSearch" onkeyup="searchByApplication()" placeholder="Enter application name...">
+    </div>
+    <table id="pingTable">
+      <thead>
+        <tr>
+          <th>Application</th>
+          <th>Server</th>
+          <th>IP Address</th>
+          <th>VLAN</th>
+          <th>Ping</th>
+          <th>Perf</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Table rows will be dynamically generated here -->
+      </tbody>
+    </table>
+  </div>
+
+ <script>
+    // Example data (replace with your actual data)
+    var data = [
+      { application: "Home", server: "Server 1", ipAddress: "151.101.2.137", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.66.137", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.130.137", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.194.137", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.1.132", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.65.132", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.129.132", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.193.132", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.226.52.70", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.226.52.34", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.226.52.38", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.226.52.48", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "44.239.53.204", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "54.68.20.208", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "54.69.243.172", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "3.93.126.98", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "54.80.177.85", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "104.69.137.112", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.249.98.49", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.249.98.53", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.249.98.65", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "13.249.98.85", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "54.165.84.136", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "54.208.193.172", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "52.71.18.217", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.65.224", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.129.224", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.193.224", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.1.224", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "129.176.1.88", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "18.64.174.97", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "18.64.174.106", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "18.64.174.39", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "18.64.174.89", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "20.112.250.133", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "20.231.239.246", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "20.236.44.162", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "20.70.246.20", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "20.76.201.171", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "23.45.182.87", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "23.45.182.69", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "146.75.84.116", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.66.28", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.130.28", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.194.28", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.2.28", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.67.5", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.131.5", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.195.5", vlan: "VLAN 10", ping: "100ms", status: "green"},
+{ application: "Home", server: "Server 1", ipAddress: "151.101.3.5", vlan: "VLAN 10", ping: "100ms", status: "green"}
+	  
+    ];
+
+    // Function to generate table rows from data
+    function generateTableRows() {
+      var tableBody = document.getElementById("tableBody");
+      tableBody.innerHTML = ""; // Clear existing rows
+
+      data.forEach(function (item) {
+        var row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.application}</td>
+          <td>${item.server}</td>
+          <td>${item.ipAddress}</td>
+          <td>${item.vlan}</td>
+          <td id="ping-${item.ipAddress}">${item.ping}</td>
+          <td><span class="status-circle" id="status-${item.ipAddress}"></span></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Function to update ping values and status
+    function updatePingValues() {
+      data.forEach(function (item) {
+        var startTime = Date.now();
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://" + item.ipAddress, true); // Replace with your actual IP address
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4) {
+            var endTime = Date.now();
+            var pingTime = endTime - startTime;
+            document.getElementById("ping-" + item.ipAddress).textContent = pingTime + "ms";
+            
+            // Update status based on ping time
+            var statusElement = document.getElementById("status-" + item.ipAddress);
+            if (pingTime < 100) {
+              statusElement.className = "status-circle green";
+            } else if (pingTime < 200) {
+              statusElement.className = "status-circle yellow";
+            } else {
+              statusElement.className = "status-circle red";
+            }
+          }
+        };
+        xhr.send();
+      });
+    }
+
+    // Call the function to generate table rows on page load
+    window.onload = function () {
+      generateTableRows();
+      updatePingValues(); // Initial update
+      setInterval(updatePingValues, 3*1000); // Update every 2 seconds
+    };
+	
+	function searchByApplication() {
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("appSearch");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("pingTable");
+      tr = table.getElementsByTagName("tr");
+
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0]; // Application column
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
